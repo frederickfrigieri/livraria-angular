@@ -1,0 +1,9 @@
+.table-secondary td {
+    font-size: 1.1rem;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+tbody tr:not(.table-secondary) td:first-child {
+    padding-left: 25px;
+}

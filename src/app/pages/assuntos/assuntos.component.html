@@ -1,0 +1,69 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Listagem de Assuntos</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
+        <i class="bi bi-plus-lg"></i> Novo Assunto
+    </button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Código</th>
+                <th>Descrição</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (item of items; track $index)
+            {
+            <tr>
+                <td>{{ item.codigo }}</td>
+                <td><strong>{{ item.descricao }}</strong></td>
+                <td class="text-center">
+                    <button class="btn btn-outline-warning btn-sm me-2" (click)="editar(item)" title="Editar">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="excluir(item)" title="Excluir">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalAutorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalAutorLabel">Cadastrar Novo Assunto</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            <form [formGroup]="assuntoForm" (ngSubmit)="salvar()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Descrição do Assunto</label>
+                        <input type="text" class="form-control" formControlName="descricao"
+                            [class.is-invalid]="assuntoForm.get('descricao')?.invalid && assuntoForm.get('descricao')?.touched">
+                        <div class="invalid-feedback">A descrição é obrigatório (mín. 3 caracteres).</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-fechar-modal" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="assuntoForm.invalid || cadastrando">
+                        @if(cadastrando){
+                            <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        Salvar Assunto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

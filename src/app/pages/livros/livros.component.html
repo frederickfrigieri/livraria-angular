@@ -1,0 +1,173 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Listagem de Livros</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal">
+        <i class="bi bi-plus-lg"></i> Novo Livro
+    </button>
+</div>
+
+<div class="table-responsive">
+    @if(carregando) {
+    <div *ngIf="carregando" class="d-flex justify-content-center my-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+        <h4 class="ms-3 mt-2 text-primary">Buscando livros...</h4>
+    </div>
+    } @else {
+    <table class="table table-hover table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Código</th>
+                <th>Título</th>
+                <th>Editora</th>
+                <th>Edição</th>
+                <th>Ano Pub.</th>
+                <th>Assuntos</th>
+                <th>Autores</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (livro of livros; track $index) {
+            <tr>
+                <td>{{ livro.codigo }}</td>
+                <td><strong>{{ livro.titulo }}</strong></td>
+                <td>{{ livro.editora }}</td>
+                <td>{{ livro.edicao }}</td>
+                <td>{{ livro.anoPublicacao }}</td>
+                <td>{{getAssuntos(livro.assuntos)}}</td>
+                <td>{{getAutores(livro.autores)}}</td>
+                <td class="text-center">
+                    <button class="btn btn-outline-warning btn-sm me-2" (click)="editar(livro)" title="Editar">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm me-2" (click)="excluir(livro.codigo)" title="Excluir">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalPreco"
+                        title="Preço">
+                        <i class="bi bi-currency-exchange"></i>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalAutorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalAutorLabel">Cadastrar Novo Autor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            <form [formGroup]="livroForm" (ngSubmit)="salvar()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Título</label>
+                        <input type="text" class="form-control" formControlName="titulo"
+                            [class.is-invalid]="livroForm.get('titulo')?.invalid && livroForm.get('titulo')?.touched">
+                        <div class="invalid-feedback">O titulo é obrigatório.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Editora</label>
+                        <input type="text" class="form-control" formControlName="editora"
+                            [class.is-invalid]="livroForm.get('editora')?.invalid && livroForm.get('editora')?.touched">
+                        <div class="invalid-feedback">A editora é obrigatório.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Edição</label>
+                        <input type="text" class="form-control" formControlName="edicao"
+                            [class.is-invalid]="livroForm.get('edicao')?.invalid && livroForm.get('edicao')?.touched">
+                        <div class="invalid-feedback">A edição é obrigatório.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ano Publicação</label>
+                        <input type="text" class="form-control" formControlName="anoPublicacao"
+                            [class.is-invalid]="livroForm.get('anoPublicacao')?.invalid && livroForm.get('anoPublicacao')?.touched">
+                        <div class="invalid-feedback">O ano de Publicação é obrigatório.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Autores</label>
+                        <ng-select [items]="autores" bindLabel="nome" bindValue="codigo" [multiple]="true"
+                            formControlName="autoresCodigo" placeholder="Selecione os autores">
+                        </ng-select>
+                        @if(livroForm.get('autoresCodigo')?.invalid && livroForm.get('autoresCodigo')?.touched) {
+                        <div class="invalid-feedback-custom">
+                            Por favor, selecione pelo menos um autor.
+                        </div>
+                        }
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Assuntos</label>
+                        <ng-select [items]="assuntos" bindLabel="descricao" bindValue="codigo" [multiple]="true"
+                            formControlName="assuntosCodigo" placeholder="Selecione os assuntos">
+                        </ng-select>
+                        @if(livroForm.get('assuntosCodigo')?.invalid && livroForm.get('assuntosCodigo')?.touched) {
+                        <div class="invalid-feedback-custom">
+                            Por favor, selecione pelo menos um assunto.
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-fechar-modal" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="livroForm.invalid || cadastrando">
+                        @if(cadastrando) {
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        }
+                        Salvar Autor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPreco" tabindex="-1" aria-labelledby="modalAutorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalAutorLabel">Cadastrar Preço</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            <!-- <form [formGroup]="livroForm" (ngSubmit)="salvar()"> -->
+            <div class="modal-body">
+                @for (item of formasCompras; track $index) {
+                <div class="mb-3">
+                    <label class="form-label">{{item.descricao}}</label>
+                    <input type="number" step="0.01" class="form-control">
+                </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn-fechar-modal" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="livroForm.invalid || cadastrando">
+                    @if(cadastrando) {
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    }
+                    Salvar Autor
+                </button>
+            </div>
+            <!-- </form> -->
+        </div>
+    </div>
+</div>
+
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    @if (showMessage) {
+    <ngb-toast header="Notificação" (hidden)="showMessage = false" [autohide]="true" [delay]="5000"
+        [ngClass]="{'bg-danger': error, 'bg-success': success}" class="text-white">
+        {{message}}
+    </ngb-toast>
+    }
+</div>

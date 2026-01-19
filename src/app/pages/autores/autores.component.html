@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Listagem de Autores</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAutor">
+        <i class="bi bi-person-plus"></i> Novo Autor
+    </button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover table-striped shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Código</th>
+                <th>Nome</th>
+                <th class="text-center">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (item of items; track $index)
+            {
+            <tr>
+                <td>{{ item.codigo }}</td>
+                <td><strong>{{ item.nome }}</strong></td>
+                <td class="text-center">
+                    <button class="btn btn-outline-warning btn-sm me-2" (click)="editar(item)" title="Editar">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="excluir(item)" title="Excluir">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="modalAutor" tabindex="-1" aria-labelledby="modalAutorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalAutorLabel">Cadastrar Novo Autor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+
+            <form [formGroup]="autorForm" (ngSubmit)="salvarAutor()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Autor</label>
+                        <input type="text" class="form-control" formControlName="nome"
+                            [class.is-invalid]="autorForm.get('nome')?.invalid && autorForm.get('nome')?.touched">
+                        <div class="invalid-feedback">O nome é obrigatório (mín. 3 caracteres).</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="btn-fechar-modal" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="autorForm.invalid || cadastrando">
+                        <span *ngIf="cadastrando" class="spinner-border spinner-border-sm me-1"></span>
+                        Salvar Autor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
