@@ -103,5 +103,7 @@ export class LivrosComponent implements OnInit {
 
   public editar(livro: any): void { }
 
-  public excluir(livro: any): void { }
+  public excluir(livro: any): void {
+    this.livroService.apagar(livro.codigo).subscribe(() => this.carregar());
+  }
 }

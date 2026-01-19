@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { inject } from "@angular/core";
+import { end } from "@popperjs/core";
 import { Observable } from "rxjs";
 
 export class LivroService {
@@ -17,5 +18,10 @@ export class LivroService {
     public cadastrar(model: any): Observable<void> {
         console.log(model);
         return this.http.post<void>(this.url + '/livros', model);
+    }
+
+    public apagar(codigo: number): Observable<void> {
+        const endpoint = this.url + '/livros/' + codigo;
+        return this.http.delete<void>(endpoint);
     }
 }
